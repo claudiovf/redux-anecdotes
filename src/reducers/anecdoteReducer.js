@@ -1,31 +1,7 @@
+import anecdotesService from '../services/anecdotes'
+import {setNotification} from '../reducers/notificationReducer'
 
-
-
-const anecdotesAtStart = [
-  'If it hurts, do it more often',
-  'Adding manpower to a late software project makes it later!',
-  'The first 90 percent of the code accounts for the first 90 percent of the development time...The remaining 10 percent of the code accounts for the other 90 percent of the development time.',
-  'Any fool can write code that a computer can understand. Good programmers write code that humans can understand.',
-  'Premature optimization is the root of all evil.',
-  'Debugging is twice as hard as writing the code in the first place. Therefore, if you write the code as cleverly as possible, you are, by definition, not smart enough to debug it.'
-]
-
-
-export const asObject = (anecdote) => {
-  const getId = () => Number((100000 * Math.random()).toFixed(0))
-
-  return {
-    content: anecdote,
-    id: getId(),
-    votes: 0
-  }
-}
-
-const initialState = anecdotesAtStart.map(asObject)
-
-
-
-const anecdoteReducer = (state = initialState, action) => {
+const anecdoteReducer = (state = [], action) => {
 
   switch(action.type) {
     case 'VOTE': {
@@ -39,10 +15,53 @@ const anecdoteReducer = (state = initialState, action) => {
     case 'ADD_ANECDOTE': {
       return [...state, action.data]
     }
+    case 'GET_ANECDOTES': {
+      return action.data
+    }
     default: 
       return state
   }
 }
 
+export const initializeAnecdotes = () => {
+  return async dispatch => {
+    const notes = await anecdotesService.getAll()
+    dispatch({
+      type: 'GET_ANECDOTES',
+      data: notes,
+    })
+  }
+}
+
+export const voteFor = (anecdote) => {
+  return async dispatch => {
+    const updatedObj = {...anecdote, votes: anecdote.votes + 1}
+    const sentObj = await anecdotesService.update(updatedObj.id, updatedObj)
+    const dispatchedObj = await dispatch({
+      type: 'VOTE',
+      data: sentObj,
+    })
+    if (dispatchedObj) {
+      dispatch(setNotification(`you voted for ${sentObj.content}`, 5))
+    }
+  }
+}
+
+export const createAnecdote = (content) => {
+  return async dispatch => {
+    const anecdote = {
+      content: content,
+      votes: 0,
+    }
+
+    const sentAnecdote = await anecdotesService.createNew(anecdote)
+    dispatch({
+      type:'ADD_ANECDOTE',
+      data: anecdote,
+    })
+
+    dispatch(setNotification(`${anecdote.content} was added to list`, 5))
+  }
+}
 
 export default anecdoteReducer
