@@ -1,4 +1,5 @@
 
+
 const notificationReducer = (state = null, action) => {
     switch (action.type) {
         case 'NOTIF': {
@@ -9,23 +10,29 @@ const notificationReducer = (state = null, action) => {
       }
 }
 
+// export const setTimer = (seconds) => {
+//     setTimeout(() => {
+//         return async dispatch => {
+//             await dispatch({
+//                 type: 'NOTIF',
+//                 data: null
+//             })
+//         }
+//     },seconds * 1000)
+// }
 
 export const setNotification = (message, seconds) => {
+
     return async dispatch => {
-        const sentNotif = await dispatch({
+        await dispatch({
             type: 'NOTIF',
-            data: message,
+            data: {
+                message: message,
+                seconds: seconds,
+            }
         })
-        
-        if (sentNotif) {
-            setTimeout(() => {
-                dispatch({
-                    type: 'NOTIF', 
-                    data: null
-                })
-            }, seconds * 1000 )
-        }
     }
 }
+
 
 export default notificationReducer

@@ -2,7 +2,6 @@ import React, { useEffect } from 'react'
 import AnecdotesList from './components/AnecdotesList'
 import AnecdoteForm from './components/AnecdoteForm'
 import SearchForm from './components/SearchForm'
-import anecdotesService from './services/anecdotes'
 import { useDispatch } from 'react-redux'
 import { initializeAnecdotes } from './reducers/anecdoteReducer'
 

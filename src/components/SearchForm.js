@@ -1,10 +1,9 @@
 import React from 'react'
-import { useDispatch } from 'react-redux'
+import { connect } from 'react-redux'
 import { addFilter } from '../reducers/filterReducer'
 
 
 const SearchForm = (props) => {
-    const dispatch = useDispatch()
 
     return(
         <>
@@ -14,11 +13,12 @@ const SearchForm = (props) => {
                 type="text"
                 onChange={(event) => {
                     const userInput = event.target.value
-                    dispatch(addFilter(userInput))
+                    props.addFilter(userInput)
                 }}
             ></input>
         </>
     )
 }
 
-export default SearchForm
+const ConnectedSearchForm = connect(null, { addFilter })(SearchForm)
+export default ConnectedSearchForm

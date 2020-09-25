@@ -36,13 +36,13 @@ export const initializeAnecdotes = () => {
 export const voteFor = (anecdote) => {
   return async dispatch => {
     const updatedObj = {...anecdote, votes: anecdote.votes + 1}
-    const sentObj = await anecdotesService.update(updatedObj.id, updatedObj)
+    const sentObj = await anecdotesService.update(anecdote.id, updatedObj)
     const dispatchedObj = await dispatch({
       type: 'VOTE',
       data: sentObj,
     })
     if (dispatchedObj) {
-      dispatch(setNotification(`you voted for ${sentObj.content}`, 5))
+      dispatch(setNotification(`you voted for ${sentObj.content}`, 10))
     }
   }
 }
@@ -54,13 +54,14 @@ export const createAnecdote = (content) => {
       votes: 0,
     }
 
-    const sentAnecdote = await anecdotesService.createNew(anecdote)
-    dispatch({
+     const savedAnecdote = await anecdotesService.createNew(anecdote)
+    
+     dispatch({
       type:'ADD_ANECDOTE',
-      data: anecdote,
+      data: savedAnecdote,
     })
 
-    dispatch(setNotification(`${anecdote.content} was added to list`, 5))
+    dispatch(setNotification(`${anecdote.content} was added to list`, 10))
   }
 }
 
